@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="id">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Login Page</title>
+    <style>
+    body{
+        margin:0;
+        font-family:Arial, sans-serif;
+        background:#5b2df5;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        height:100vh;
+    }
+    .card{
+        background:#fff;
+        padding:20px;
+        border-radius:10px;
+        width:100%;
+        max-width:350px;
+    }
+    .icon{
+        width:60px;
+        height:60px;
+        border-radius:50%;
+        background:#6c63ff;
+        margin:0 auto 10px;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        color:#fff;
+        font-size:28px;
+    }
+    h1{
+        text-align:center;
+        margin:10px 0;
+        font-size:20px;
+    }
+    p{
+        text-align:center;
+        font-size:14px;
+        color:#666;
+    }
+    label{
+        display:block;
+        margin:10px 0 5px;
+        font-size:14px;
+    }
+    input{
+        width:100%;
+        padding:10px;
+        border:1px solid #ddd;
+        border-radius:5px;
+        font-size:14px;
+    }
+    .row{
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+        margin:10px 0;
+        font-size:14px;
+    }
+    button{
+        width:100%;
+        padding:10px;
+        border:none;
+        border-radius:5px;
+        background:#6c63ff;
+        color:#fff;
+        font-size:15px;
+        margin-top:10px;
+        cursor:pointer;
+    }
+    .google{
+        margin-top:10px;
+        padding:10px;
+        border:1px solid #ddd;
+        background:#fff;
+        display:block;
+        text-align:center;
+        border-radius:5px;
+        cursor:pointer;
+    }
+    .footer{
+        text-align:center;
+        margin-top:10px;
+        font-size:14px;
+    }
+    .footer a{
+        color:#6c63ff;
+        text-decoration:none;
+    }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="icon">👤</div>
+        <h1>Selamat Datang</h1>
+        <p>Silahkan Login untuk Melanjutkan</p>
+    <form>
+        <label>Email</label>
+        <input type="email" placeholder="Masukkan Email Anda" required>
+
+        <label>Password</label>
+        <input type="password" placeholder="Masukkan Password Anda" required>
+
+        <div class="row">
+            <label><input type="checkbox"> Ingat Saya</label>
+            <a href="#">Lupa Password</a>
+        </div>
+
+        <button type="submit">MASUK</button>
+
+        <p style="color: gray;">atau masuk dengan</p>
+        <div class="google">Google</div>
+
+        <div class="footer">Belum punya akun? <a href="#">Daftar Sekarang</a></div>
+    </form>
+    </div>
+</body>
+</html>

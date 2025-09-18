@@ -5,11 +5,22 @@
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <title>Daftar Mahasiswa</title>
-        <link rel="stylesheet" href="{% static 'style.css' %}" />
+        <link rel="stylesheet" href="{% static 'style.css ' %}" />
     </head>
     <body>
         <div class="container">
         <h1>Daftar Mahasiswa</h1>
+
+        <form method="post" actions="{% url 'mahasiswa' %}" style="margin-bottom: 20px;">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="add">
+
+            <input type="text" name="NIM" placeholder="NIM" required>
+            <input type="text" name="firstname" placeholder="Nama Depan" required>
+            <input type="text" name="lastname" placeholder="Nama Belakang" required>
+            <input type="text" name="jurusan" placeholder="Jurusan" required>
+            <button type="submit">Tambah</button>
+        </form>
 
         <table class="table">
             <thead>
@@ -22,16 +33,35 @@
             <tbody>
             {% for m in mymahasiswa %}
             <tr>
-                <td>{{ m.nim|default:"-" }}</td>
-                <td>{{ m.firstname }} {{ m.lastname }}</td>
-                <td><span class="badge">{{ m.jurusan|default:"-" }}</span></td>
+                <form method="post" actions="{% url 'mahasiswa' %}">
+                {% csrf_token %}
+                <td>
+                    <input type="hidden" name="id" value="{{ m.id }}">
+                    <input type="hidden" name="nim" value="{{ m.nim }}">
+                </td>
+                <td>
+                    <input type="text" name="firstname" value="{{ m.firstname }}" required/>
+                    <input type="text" name="lastname" value="{{ m.lastname }}" required/>
+                </td>
+                <td>
+                    <input type="text" name="jurusan" value="{{ m.jurusan }}" required>
+                </td>
+                <td>
+                    <button type="submit" name="action" value="update">Update</button>
+                    <button type="submit" name="action" value="delete">Delete</button>
+                </td>
+                </form>
             </tr>
             {% empty %}
-            <tr>
-                <td colspan="3">Belum ada data.</td>
-            </tr>
+
             {% endfor %}
             </tbody>
+            <tr>
+            <td colspan="4" style="text-align: center;">
+                {% if no_data %}
+                No data available.
+                {% endif %}
+            </td>
         </table>
 
         <p class="footer">Contoh styling sederhana dengan static files Django.</p>

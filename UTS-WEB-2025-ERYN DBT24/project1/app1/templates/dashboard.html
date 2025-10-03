@@ -1,0 +1,77 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>UTS WebDev</title>
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+</head>
+<body>
+<div class="header-bar">
+    <div class="logo">
+        <img src="{% static 'Logo-Universitas-Prasetiya-Mulya (1).png' %}" alt="Logo" height="48">
+    </div>
+    <div class="navbar">
+        <a href="{% url 'coop:dashboard' %}">Dashboard</a>
+        <a href="{% url 'coop:job_list' %}">Job List</a>
+        <a href="{% url 'coop:confirm_internship' %}">Internship</a>
+        
+        {% if active_conf_id %}
+            <a href="{% url 'coop:monthly_report_add' conf_id=active_conf_id %}">Report</a>
+            <a id="eval-link" href="{% url 'coop:send_evaluation' conf_id=active_conf_id %}">Evaluasi</a>
+            <a href="{% url 'coop:certificate_generate' cert_id=active_conf_id %}">Sertifikat</a>
+        {% else %}
+            <a href="#" class="disabled-nav-link" onclick="alert('Anda harus mengisi Konfirmasi Penerimaan Magang terlebih dahulu (menu Internship).'); return false;">Report</a>
+            <a id="eval-link-disabled" href="#" class="disabled-nav-link" onclick="alert('Anda harus mengisi Konfirmasi Penerimaan Magang terlebih dahulu (menu Internship).'); return false;">Evaluasi</a>
+            <a href="#" class="disabled-nav-link" onclick="alert('Anda harus mengisi Konfirmasi Penerimaan Magang terlebih dahulu (menu Internship).'); return false;">Sertifikat</a>
+        {% endif %}
+        
+        <a href="{% url 'coop:signup' %}">Pendaftaran</a>
+    </div>
+</div>
+<div class="container">
+    <h2>Dashboard</h2>
+    <h3>Status Magang</h3>
+    {% if confirmations %}
+        <ul>
+        {% for conf in confirmations %}
+            <li>{{ conf.company }} ({{ conf.start }} - {{ conf.end }})</li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>Belum ada konfirmasi magang.</p>
+    {% endif %}
+    <br>
+    <h3>Upload Laporan Akhir</h3>
+    {% if confirmations %}
+    {% with active=confirmations.0 %}
+        {% if active.finalreport %}
+        <p>Laporan akhir sudah diupload pada {{ active.finalreport.submitted_at }}</p>
+        {% else %}
+        <p>Belum ada laporan akhir yang diupload.</p>
+        <form method="post" enctype="multipart/form-data" action="{% url 'coop:upload_final_report' active_conf_id %}">
+            {% csrf_token %}
+            {{ final_report_form.file }}
+            <button type="submit" class="btn btn-primary">Upload Laporan Akhir</button>
+        </form>
+        {% endif %}
+    {% endwith %}
+    {% else %}
+    <p>Upload laporan akhir belum tersedia</p>
+    {% endif %}
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const evalLink = document.getElementById('eval-link');
+        
+        if (evalLink) {
+            evalLink.addEventListener('click', function(event) {
+                event.preventDefault();
+                alert("Evaluasi sudah kirim pengiriman email ke email supervisor");
+            });
+        }
+    });
+</script>
+</body>
+</html>

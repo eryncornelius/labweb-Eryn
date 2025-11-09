@@ -1,0 +1,4 @@
+- [x] Change API_BASE_URL in studentapp/src/services/login.js from 'http://localhost:3000' to 'http://localhost:8000'
+- [x] Fix syntax error in reactauth/users/serializers.py: change validated_data.get['major', ''] to validated_data.get('major', '')
+- [x] Ensure Django backend is running on port 8000
+- [ ] Test login functionality

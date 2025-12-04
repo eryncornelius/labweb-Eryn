@@ -6,7 +6,7 @@ AMADEUS_CLIENT_ID = os.getenv('AMADEUS_CLIENT_ID')
 AMADEUS_CLIENT_SECRET = os.getenv('AMADEUS_CLIENT_SECRET')
 
 TOKEN_URL = 'https://test.api.amadeus.com/v1/security/oauth2/token'
-FLIGHT_OFFERS_URL = 'https://test.api.amadeus.com/v2/shopping/flight-offers'
+FLIGHT_DESTINATIONS_URL = 'https://test.api.amadeus.com/v1/shopping/flight-destinations'
 
 _token_cache = {'access_token': None, 'expires_at': 0}
 
@@ -63,16 +63,18 @@ def search_flights(origin, destination, depart_date, return_date=None, adults=1)
 
     headers = {'Authorization': f'Bearer {token}'}
     params = {
-        'originLocationCode': origin,
-        'destinationLocationCode': destination,
+        'origin': origin,
         'departureDate': depart_date,
-        'adults': adults,
-        'max': 10,
+        'oneWay': 'false' if return_date else 'true',
+        'duration': '7,14' if return_date else '7',
+        'nonStop': 'false',
+        'maxPrice': 500,
+        'currency': 'USD',
     }
     if return_date:
         params['returnDate'] = return_date
 
-    r = requests.get(FLIGHT_OFFERS_URL, headers=headers, params=params)
+    r = requests.get(FLIGHT_DESTINATIONS_URL, headers=headers, params=params)
     r.raise_for_status()
     data = r.json()
     offers = []
@@ -80,13 +82,13 @@ def search_flights(origin, destination, depart_date, return_date=None, adults=1)
     for idx, item in enumerate(data.get('data', [])):
         price = item.get('price', {}).get('total', 'N/A')
         offers.append({
-            'id': item.get('id', f'R{idx}'),
-            'airline': item.get('validatingAirlineCodes', [''])[0],
-            'departure': origin,
-            'arrival': destination,
-            'depart_date': depart_date,
-            'return_date': return_date or '',
+            'id': f'DEST-{idx}',
+            'airline': 'Various',
+            'departure': item.get('origin', origin),
+            'arrival': item.get('destination', destination),
+            'depart_date': item.get('departureDate', depart_date),
+            'return_date': item.get('returnDate', return_date or ''),
             'price': f"USD {price}",
-            'details': 'See provider',
+            'details': 'Flight destination offer',
         })
     return offers

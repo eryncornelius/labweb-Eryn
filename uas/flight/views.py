@@ -2,8 +2,14 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from .forms import SearchForm, BookingForm
 from . import amadeus_client
-from .models import Booking
+from .models import Booking, FlightOffer
+from django.http import JsonResponse
+from amadeus import Client, ResponseError
 
+amadeus = Client(
+    client_id='kTKwqYMbRvGICwAMPDXAKVWN5NaYGpVv',
+    client_secret='epQl9tAOWOOTiz4w'
+)
 
 def index(request):
     form = SearchForm(request.GET or None)
@@ -24,11 +30,9 @@ def results(request):
 
 
 def book(request, offer_id):
-    # In a full app we'd fetch offer details from API or session. For now we accept offer_id and details via GET.
     if request.method == 'POST':
         form = BookingForm(request.POST)
         if form.is_valid():
-            # extract minimal info from POST hidden fields
             flight_id = request.POST.get('flight_id')
             airline = request.POST.get('airline')
             departure = request.POST.get('departure')
@@ -37,20 +41,25 @@ def book(request, offer_id):
             return_date = request.POST.get('return_date')
             price = request.POST.get('price')
 
-            booking = Booking.objects.create(
+            flight_offer, created = FlightOffer.objects.get_or_create(
                 flight_id=flight_id,
-                airline=airline,
-                departure=departure,
-                arrival=arrival,
-                depart_date=depart_date,
-                return_date=return_date,
-                price=price or '',
+                defaults={
+                    'airline': airline,
+                    'departure': departure,
+                    'arrival': arrival,
+                    'depart_date': depart_date,
+                    'return_date': return_date if return_date else None,
+                    'price': price.replace('USD ', '') if price else 0,
+                }
+            )
+
+            booking = Booking.objects.create(
+                flight_offer=flight_offer,
                 passenger_name=form.cleaned_data['passenger_name'],
                 passport_number=form.cleaned_data['passport_number'],
             )
             return render(request, 'flights/booking_success.html', {'booking': booking})
     else:
-        # GET: show form prefilled with offer information passed as query params
         initial = {
             'passenger_name': '',
             'passport_number': '',

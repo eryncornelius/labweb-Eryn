@@ -5,6 +5,8 @@ from . import amadeus_client
 from .models import Booking, FlightOffer
 from django.http import JsonResponse
 from amadeus import Client, ResponseError
+from datetime import datetime
+from decimal import Decimal, InvalidOperation
 
 amadeus = Client(
     client_id='kTKwqYMbRvGICwAMPDXAKVWN5NaYGpVv',
@@ -52,6 +54,33 @@ def book(request, offer_id):
                     'price': price.replace('USD ', '') if price else 0,
                 }
             )
+
+            parsed_depart = None
+            parsed_return = None
+            if depart_date:
+                try:
+                    parsed_depart = datetime.fromisoformat(depart_date).date()
+                except Exception:
+                    parsed_depart = depart_date
+            if return_date:
+                try:
+                    parsed_return = datetime.fromisoformat(return_date).date()
+                except Exception:
+                    parsed_return = return_date
+
+            flight_offer.airline = airline
+            flight_offer.departure = departure
+            flight_offer.arrival = arrival
+            if parsed_depart is not None:
+                flight_offer.depart_date = parsed_depart
+            flight_offer.return_date = parsed_return if parsed_return else None
+            if price:
+                price_clean = price.replace('USD ', '').replace('$', '').strip()
+                try:
+                    flight_offer.price = Decimal(price_clean)
+                except (InvalidOperation, ValueError):
+                    pass
+            flight_offer.save()
 
             booking = Booking.objects.create(
                 flight_offer=flight_offer,

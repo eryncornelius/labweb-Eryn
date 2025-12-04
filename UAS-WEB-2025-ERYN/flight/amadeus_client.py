@@ -33,7 +33,6 @@ def _get_token():
 def search_flights(origin, destination, depart_date, return_date=None, adults=1):
     """Return a list of flight offers. If no Amadeus credentials are set, return a mock sample."""
     if not AMADEUS_CLIENT_ID or not AMADEUS_CLIENT_SECRET:
-        # Mock sample data for development
         return [
             {
                 'id': 'MOCK-1',
@@ -78,7 +77,6 @@ def search_flights(origin, destination, depart_date, return_date=None, adults=1)
     r.raise_for_status()
     data = r.json()
     offers = []
-    # Simplify the Amadeus response into our minimal structure
     for idx, item in enumerate(data.get('data', [])):
         price = item.get('price', {}).get('total', 'N/A')
         offers.append({

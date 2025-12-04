@@ -1,0 +1,39 @@
+{% extends "flights/base.html" %}
+
+{% block title %}Booking Confirmed{% endblock %}
+
+{% block content %}
+    <div class="alert alert-success">
+        <h4>Thank you for your booking!</h4>
+        <p>Your flight has been successfully booked.</p>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <h5>Booking Details</h5>
+        </div>
+        <div class="card-body">
+            <h6>Passenger Information</h6>
+            <p><strong>Name:</strong> {{ booking.passenger_name }}</p>
+            <p><strong>Passport:</strong> {{ booking.passport_number }}</p>
+
+            <h6>Flight Details</h6>
+            <p><strong>Flight ID:</strong> {{ booking.flight_offer.flight_id }}</p>
+            <p><strong>Airline:</strong> {{ booking.flight_offer.airline }}</p>
+            <p><strong>Route:</strong> {{ booking.flight_offer.departure }} to {{ booking.flight_offer.arrival }}</p>
+            <p><strong>Departure Date:</strong> {{ booking.flight_offer.depart_date }}</p>
+            {% if booking.flight_offer.return_date %}
+                <p><strong>Return Date:</strong> {{ booking.flight_offer.return_date }}</p>
+            {% endif %}
+            <p><strong>Price:</strong> ${{ booking.flight_offer.price }}</p>
+
+            <h6>Booking Information</h6>
+            <p><strong>Booking ID:</strong> {{ booking.id }}</p>
+            <p><strong>Booked on:</strong> {{ booking.created_at|date:"M d, Y H:i" }}</p>
+        </div>
+    </div>
+
+    <div class="mt-3">
+        <a href="{% url 'index' %}" class="btn btn-primary">Search Another Flight</a>
+    </div>
+{% endblock %}

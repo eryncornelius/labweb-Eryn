@@ -1,0 +1,38 @@
+{% extends 'flights/base.html' %}
+{% block content %}
+    <h1>Flight Booking</h1>
+    <div class="card mb-3">
+        <div class="card-body">
+        <h5 class="card-title">{{ offer.airline }} — {{ offer.price }}</h5>
+        <p class="card-text">From {{ offer.departure }} to {{ offer.arrival }}</p>
+        <p class="card-text">Depart: {{ offer.depart_date }} {% if offer.return_date %} • Return: {{ offer.return_date }}{% endif %}</p>
+        </div>
+    </div>
+
+    <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+        <input type="hidden" name="flight_id" value="{{ offer.id }}">
+        <input type="hidden" name="airline" value="{{ offer.airline }}">
+        <input type="hidden" name="departure" value="{{ offer.departure }}">
+        <input type="hidden" name="arrival" value="{{ offer.arrival }}">
+        <input type="hidden" name="depart_date" value="{{ offer.depart_date }}">
+        <input type="hidden" name="return_date" value="{{ offer.return_date|default:'' }}">
+        <input type="hidden" name="price" value="{{ offer.price|default:'' }}">
+
+        <label for="{{ form.passenger_name.id_for_label }}">Name</label>
+        {{ form.passenger_name }}
+
+        <label for="{{ form.passport_number.id_for_label }}">Passport Number</label>
+        {{ form.passport_number }}
+
+        {% if form.errors %}
+            <div style="color: red;">
+                {{ form.non_field_errors }}
+            </div>
+        {% endif %}
+
+        <input type="submit" value="Confirm Booking">
+    </form>
+
+{% endblock %}

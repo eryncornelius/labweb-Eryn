@@ -1,0 +1,30 @@
+{% extends 'flights/base.html' %}
+{% block content %}
+    <h1>Flight Results</h1>
+    {% if offers %}
+        <div class="list-group">
+        {% for o in offers %}
+            <div class="list-group-item">
+            <div class="row">
+                <div class="col-md-3">
+                <strong>{{ o.airline }}</strong>
+                <div class="text-muted">{{ o.details }}</div>
+                </div>
+                <div class="col-md-5">
+                <div>From: {{ o.departure }} → To: {{ o.arrival }}</div>
+                <div>Depart: {{ o.depart_date }} {% if o.return_date %} • Return: {{ o.return_date }}{% endif %}</div>
+                </div>
+                <div class="col-md-2">
+                <strong>{{ o.price }}</strong>
+                </div>
+                <div class="col-md-2 text-end">
+                <a class="btn btn-success" href="{% url 'book' o.id %}?airline={{ o.airline }}&departure={{ o.departure }}&arrival={{ o.arrival }}&depart_date={{ o.depart_date }}&return_date={{ o.return_date }}&price={{ o.price }}">Book</a>
+                </div>
+            </div>
+            </div>
+        {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-info">No offers found.</div>
+    {% endif %}
+{% endblock %}
